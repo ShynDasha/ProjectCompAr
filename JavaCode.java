@@ -46,12 +46,12 @@ public class JavaCode {
 
     // для конвертації десяткового числа у бінарне представлення
     private static String decimalToBinary(int num) {
-        String binary = Integer.toBinaryString(num);
-        StringBuilder paddedBinary = new StringBuilder(binary);
-        while (paddedBinary.length() < 16) {
-            paddedBinary.insert(0, '0');
-        }
-        return paddedBinary.toString();
+       StringBuilder binary = new StringBuilder();
+       for (int i=0; i<16; i++){
+        binary.insert(0, num & 1);
+        num >>=1;
+       }
+        return binary.toString();
     }
 
     // Метод для сортування списку рядків за допомогою алгоритму сортування злиттям
