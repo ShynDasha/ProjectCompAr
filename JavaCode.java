@@ -40,11 +40,21 @@ public class JavaCode {
             System.out.println(binary);
         }
 
+        // З'єднує в одну стрічку відсортовані бінарні числа з бітом 1, а потім з бітом 0
+         String combinedBinaryNumbers = combineBinaryNumbers(sortedBinaryNumbersWithB1, sortedBinaryNumbersWithB0);
+         System.out.println("Відсортовані усі значення");
+         System.out.println(combinedBinaryNumbers);
 
-        // cортування за допомогою алгоритму сортування злиттям
-      
+         List<Integer> decimalNumbers = binaryToDecimal(combinedBinaryNumbers);
 
-        // Обчислення медіани
+         // Обчислюємо середнє значення
+         double average = calculateAverage(decimalNumbers);
+         System.out.println("Середнє значення: " + average);
+ 
+         // Обчислюємо медіану
+         double median = calculateMedian(decimalNumbers);
+         System.out.println("Медіана: " + median);
+
     }
 
     // для конвертації десяткового числа у бінарне представлення
@@ -84,28 +94,72 @@ public class JavaCode {
         return merged;
     }
 
+    private static String combineBinaryNumbers(List<String> binaryNumbersWithMSB1, List<String> binaryNumbersWithMSB0) {
+        StringBuilder combined = new StringBuilder();
+        for (String binary : binaryNumbersWithMSB1) {
+            combined.append(binary).append(" ");
+        }
+        for (String binary : binaryNumbersWithMSB0) {
+            combined.append(binary).append(" ");
+        }
+        return combined.toString();
+    }
+
+  // Перетворює бінарне число у відповідне десяткове значення
+  public static int convertBinaryToDecimal(String binary) {
+    if (binary == null || binary.isEmpty()) {
+        return 0;
+    }
+    boolean isNegative = binary.charAt(0) == '1';
+
+    if (!isNegative) {
+        return Integer.parseInt(binary, 2);
+    } else {
+
+        // Перетворює об'єднану бінарну стрічку в список десяткових чисел
+        String invertedBinary = binary
+                .substring(1)
+                .replace('0', '2')
+                .replace('1', '0')
+                .replace('2', '1');
+
+        int decimalValue = Integer.parseInt(invertedBinary, 2) + 1;
+
+        return -decimalValue;
+    }
+}
+
+// Перетворює об'єднану бінарну стрічку в список десяткових чисел
+private static List<Integer> binaryToDecimal(String combinedBinaryNumbers) {
+    List<Integer> decimalNumbers = new ArrayList<>();
+    String[] binaryTokens = combinedBinaryNumbers.trim().split("\\s+");
+    for (String binary : binaryTokens) {
+        int decimal = convertBinaryToDecimal(binary);
+        decimalNumbers.add(decimal);
+    }
+    return decimalNumbers;
+}
+
+    
     //для обчислення медіани з відсортованого списку
-    private static int calculateMedian(List<String> arr) {
-        int n = arr.size();
-        if (n % 2 == 0) {
-            String num1 = arr.get(n / 2);
-            String num2 = arr.get(n / 2 - 1);
-            int decimal1 = Integer.parseInt(num1, 2);
-            int decimal2 = Integer.parseInt(num2, 2);
-            return (decimal1 + decimal2) / 2;
+    private static double calculateMedian(List<Integer> numbers) {
+        Collections.sort(numbers);
+        int size = numbers.size();
+        if (size % 2 == 0) {
+            int midIndex = size / 2;
+            return (double) (numbers.get(midIndex - 1) + numbers.get(midIndex)) / 2;
         } else {
-            String num = arr.get(n / 2);
-            return Integer.parseInt(num, 2);
+            return numbers.get(size / 2);
         }
     }
     
     //для обчислення середнього значення бінарних чисел
-    private static double calculateAverage(List<String> arr) {
+    private static double calculateAverage(List<Integer> numbers) {
         double sum = 0;
-        for (String num : arr) {
-            sum += Integer.parseInt(num, 2);
+        for (int num : numbers) {
+            sum += num;
         }
-        return sum / arr.size();
+        return sum / numbers.size();
     }
     
 }
