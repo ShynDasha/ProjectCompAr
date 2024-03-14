@@ -1,3 +1,8 @@
+/*
+ * Шин Дарія
+ * для закінчення вводу натиснути два рази enter
+ * для переходу на новий рядок натиснути один раз enter
+ */
 import java.util.*;
 
 public class JavaCode {
@@ -94,6 +99,7 @@ public class JavaCode {
         return merged;
     }
 
+    //з'єднує дві стрічки бінарних значень в одну
     private static String combineBinaryNumbers(List<String> binaryNumbersWithMSB1, List<String> binaryNumbersWithMSB0) {
         StringBuilder combined = new StringBuilder();
         for (String binary : binaryNumbersWithMSB1) {
