@@ -45,13 +45,6 @@ public class JavaCode {
       
 
         // Обчислення медіани
-        int median = calculateMedian(binaryNumbers);
-        System.out.println("Медіана : " + median);
-
-
-        // Обчислення середнього значення
-        double average = calculateAverage(binaryNumbers);
-        System.out.println("Середнє значенння: " + average);
     }
 
     // для конвертації десяткового числа у бінарне представлення
