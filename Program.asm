@@ -1,17 +1,40 @@
-section .data
-    inputBuffer resb 256     ; Буфер для зберігання введення
-    numbers       dd 10000 dup(0)   ; Масив для зберігання десяткових чисел
-    count         dd 0         ; Кількість зчитаних чисел
 
-section .text
-    extern read_input
-    extern convert_to_binary
-    extern bubble_sort
-    extern calculate_median
-    extern calculate_average
 
-global _start
-_start:
-    ; Зчитування введення зі стандартного вводу
-    mov rsi, inputBuffer   ;  буфер для зберігання введення
-    call read_input         ;  для зчитування вводу
+.model small
+.stack 100h
+
+.data
+    charArray db 1000 dup(0) 
+
+.code
+start PROC
+    mov ax, @data
+    mov ds, ax
+
+  
+    mov cx, 1000 
+    lea bx, charArray 
+    readChars:
+        mov ah, 01h 
+        int 21h 
+        mov [bx], al 
+        inc bx 
+        loop readChars 
+
+
+   
+    mov cx, 1000
+    lea bx, charArray 
+    writeChars:
+        mov dl, [bx] 
+        mov ah, 02h 
+        int 21h 
+        inc bx 
+        loop writeChars 
+
+   
+    mov ax, 4c00h 
+    int 21h 
+start ENDP
+
+END start
