@@ -205,8 +205,9 @@ clearRegisters endp
 calculation proc 
     calculationSrart:
         mov ah, 02h        ; виведення символу
-        mov dl, "r"
+        mov dl, 'r'
         int 21h            ; виклик DOS
+
         ret                ; повер
 calculation endp 
 
@@ -241,6 +242,11 @@ calculateMedian proc
     mov ah, 02h            ; Виведення символу
     int 21h                ; Виклик DOS
 
+    ; Додавання символу пробілу
+    mov dl, ' '            ; ASCII код символу пробілу
+    mov ah, 02h            ; Виведення символу
+    int 21h                ; Виклик DOS
+
     ret
 calculateMedian endp
 
@@ -259,6 +265,11 @@ calculateAverage proc
        add dx, '0'            ; Перетворення числа у символьне представлення
        mov ah, 02h             ; Виведення символу
        int 21h                 ; Виклик DOS
+
+       ; Додавання символу пробілу
+       mov dl, ' '            ; ASCII код символу пробілу
+       mov ah, 02h            ; Виведення символу
+       int 21h                ; Виклик DOS
 
        ret
  calculateAverage endp
