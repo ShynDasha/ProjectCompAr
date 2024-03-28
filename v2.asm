@@ -3,7 +3,7 @@
 
 .data
 oneChar db 0 ; змінна для зберігання символу
-numbersArray dw 10 dup(2) ; масив чисел
+numbersArray dw 1000 dup(2) ; масив чисел
 powerCounter dw 0         ; лічильник ступеня десятки
 inputValue dw 0           ; буфер для зберігання числа
 arrayIndex dw 0           ; індекс для масиву
@@ -16,18 +16,18 @@ wordCount dw 0            ; лічильник слів
 
    
 .code
-    main proc 
+ main proc 
         mov ax, @data
         mov ds, ax 
         
         ;call methods
         call input
         call bubbleSort
-        call calculateMed
-        call calculateAv
-    main endp
+        ;call calculateMedian
+        call calculateAverage
+ main endp
 
-  addToArray proc
+addToArray proc
     lea bx, [numbersArray]  
     add bx, arrayIndex     
     mov [bx], dx             
@@ -35,9 +35,9 @@ wordCount dw 0            ; лічильник слів
     inc arrayIndex          
     inc wordCount            
     ret                     
-  addToArray endp
+addToArray endp
 
-  powerOfTen proc
+powerOfTen proc
     powerOfTen: 
     mov cx, [powerCounter]   
     mov bx, 10              
@@ -51,9 +51,9 @@ wordCount dw 0            ; лічильник слів
 
     endPowerOfTen:
     ret                        
-  powerOfTen endp
+powerOfTen endp
 
-  floor proc
+floor proc
       cmp dx, 32767
       jno endFloor
       mov dx, 32767
@@ -61,9 +61,9 @@ wordCount dw 0            ; лічильник слів
       endFloor:
       ret
          
-  floor endp
+floor endp
 
-  input proc
+input proc
     inputStart:
         mov ah, 3Fh          ; читання символу
         mov bx, 0h 
@@ -162,55 +162,77 @@ wordCount dw 0            ; лічильник слів
         jmp endInput        
 
         ret
-    input endp
+input endp
 
   
         
-    bubbleSort proc 
-       call clearRegist
-       mov cx, word ptr сWords
-       dec cx  ; count-1
+bubbleSort proc 
+    call clearRegisters   ; виклик процедури очищення регістрів
+    mov cx, word ptr wordCount  ; завантаження кількості слів
+    dec cx                ; зменшення кількості на 1
 
-      outerLoop:
-       push cx
-       lea si, numbers
+    outerLoop:
+        push cx           ; збереження cx у стеку
+        lea si, numbersArray ; завантаження адреси масиву 'numbersArray' у регістр si
 
-      innerLoop:
-       mov ax, [si]
-       cmp ax, [si+2]
-       jl nextStep
-       xchg [si+2], ax
-       mov [si], ax
-      nextStep:
-       add si, 2
-       loop innerLoop
-       pop cx
-       loop outerLoop
+        innerLoop:
+            mov ax, [si]      ; завантаження значення з пам'яті, на яку вказує si
+            cmp ax, [si+2]   ; порівняння з наступним елементом
+            jl nextStep      ; перехід до наступного кроку, якщо значення менше
+            xchg [si+2], ax  ; обмін значень
+            mov [si], ax     ; збереження значення
+        nextStep:
+            add si, 2        ; збільшення si для переходу до наступного елементу
+            loop innerLoop   ; повторення внутрішнього циклу
 
-      ret
-    bubbleSort endp
+        pop cx                ; відновлення cx зі стеку
+        loop outerLoop        ; повторення зовнішнього циклу
 
-    clearRegist proc ;обнулення регістрів
+    ret
+bubbleSort endp
+
+ clearRegisters proc ;обнулення регістрів
        xor ax,ax
        xor bx, bx
        xor cx, cx 
        xor dx, dx
        xor si, si 
        ret
-    clearRegist endp
+clearRegisters endp
 
-    calculation proc 
-     
-    calculation endp 
+calculation proc 
+    calculationSrart:
+        mov ah, 02h        ; виведення символу
+        mov dl, "g"
+        int 21h            ; виклик DOS
+        ret                ; повер
+calculation endp 
+
 
     calculateMed proc
       
     calculateMed endp
 
-    calculateAv proc
-       
-    calculateAv endp
+
+calculateAverage proc
+    call clearRegisters    ; Очищення регістрів
+
+       mov dx, sumHigh        ; Завантаження верхнього слова суми у регістр dx
+       mov ax, sumLow         ; Завантаження нижнього слова суми у регістр ax
+       mov bx, wordCount      ; Завантаження кількості слів у регістр bx
+
+       cwd                     ; Знакове розширення ax 
+       idiv bx                 ; Ділення на bx (кількість слів)
+       mov dx, ax              ; Переміщення результату ділення у dx
+
+       add dx, "0"             ; Перетворення числа у символьне представлення
+       mov ah, 02h             ; Виведення символу
+       int 21h                 ; Виклик DOS
+
+       ret
+ calculateAverage endp
+
     mov ax, 4c00h      ; DOS exit function
     int 21h            ; Exit program
-   end main
+end main
 
