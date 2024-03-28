@@ -27,37 +27,33 @@ wordCount dw 0            ; лічильник слів
         call calculateAv
     main endp
 
-    addToArray proc
-       lea bx, [numbers]
-       add bx, arrayIndex
-       mov [bx], dx
-       inc arrayIndex
-       inc arrayIndex
-       inc сWords
-       ret
-    addToArray endp
+  addToArray proc
+    lea bx, [numbersArray]  
+    add bx, arrayIndex     
+    mov [bx], dx             
+    inc arrayIndex          
+    inc arrayIndex          
+    inc wordCount            
+    ret                     
+  addToArray endp
 
-    powerOfTen proc
-        powerOfTen: 
-        mov cx, [power]
-        mov bx, 10
+  powerOfTen proc
+    powerOfTen: 
+    mov cx, [powerCounter]   
+    mov bx, 10              
 
-        cmp cx, 0
-        je endPowerOfTen 
+    cmp cx, 0                 
+    je endPowerOfTen         
 
-        powerLoop:
-        mul bx
-        loop powerLoop
+    powerLoop:
+    mul bx                    
+    loop powerLoop            
 
-        endPowerOfTen:
-        ret 
-    powerOfTen endp
+    endPowerOfTen:
+    ret                        
+  powerOfTen endp
 
-    input proc
-     
-    input endp
-
-    floor proc
+  floor proc
       cmp dx, 32767
       jno endFloor
       mov dx, 32767
@@ -65,7 +61,110 @@ wordCount dw 0            ; лічильник слів
       endFloor:
       ret
          
-    floor endp
+  floor endp
+
+  input proc
+    inputStart:
+        mov ah, 3Fh          ; читання символу
+        mov bx, 0h 
+        mov cx, 1
+        mov dx, offset oneChar
+        int 21h
+
+        or ax, ax
+        jz skip
+
+        mov inputValue, ax 
+
+        mov ah, 02h        
+        mov dl, oneChar
+        int 21h
+
+        cmp oneChar, '-'
+        jne checkSpecialCharacters
+        mov isNegative, 1   
+        jmp inputStart
+
+    checkSpecialCharacters:
+        cmp oneChar, 0ah  
+        je popCharacters 
+        cmp oneChar, 0dh  
+        je popCharacters 
+        cmp oneChar, 20h   
+        je popCharacters 
+
+        mov spaceCount, 0   
+
+        push dx              ; збереження символу у стеку
+        inc digitCount     
+        jmp endInput
+
+    skip:
+        jmp popCharacters
+
+    endInput:
+        mov ax, inputValue
+        or ax, ax
+        jnz inputStart      ; повторення вводу, якщо введений символ не дорівнює нулю
+
+        cmp digitCount, 0  
+        jne progJump        
+        jmp calculationSrart
+
+    progJump:
+        jmp popCharacters
+
+    popCharacters:
+        inc spaceCount
+        cmp spaceCount, 2   
+        jne popLoopFirst   
+        jmp calculationSrart
+
+    popLoopFirst:
+        mov cl, digitCount 
+        xor ax, ax         
+        xor dx, dx         
+
+    popLoop:
+        pop ax             
+        sub ax, '0'        
+
+        push cx           
+        push dx            
+        call powerOfTen    
+        pop dx             
+        pop cx            
+
+        add dx, ax        
+
+        inc powerCounter  
+        loop popLoop      
+
+    popLoopEnd:
+        mov digitCount, 0   
+        mov powerCounter, 0 ; обнулення лічильника ступеня десятки
+
+        call floor          
+        cmp isNegative, 1  
+        jne calculateSum    
+        neg dx            
+
+    calculateSum:
+        call addToArray   
+
+        mov sumHigh, 0     
+        add sumLow, dx      
+        adc sumHigh, 0      
+
+        mov dx, 0         
+        mov isNegative, 0   
+
+        jmp endInput        
+
+        ret
+    input endp
+
+  
         
     bubbleSort proc 
        call clearRegist
